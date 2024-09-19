@@ -39,20 +39,22 @@ CREATE TABLE netflix
 );
 ```
 ## Business Problems and Solutions
-/*
-1. Count the number of Movies vs TV Shows
-*/
 
+
+### 1. Count the number of Movies vs TV Shows
+
+```sql
 SELECT
 	type,
     COUNT(*) AS total_content
 FROM netflix
 GROUP BY type;
+```
 
-/*
-2. Find the most common rating for movies and TV shows
-*/
 
+### 2. Find the most common rating for movies and TV shows
+
+```sql
 SELECT
 	type,
     rating
@@ -68,21 +70,22 @@ GROUP BY 1, 2
 ) as t1
 WHERE 
 	ranking = 1;
-    
-/*
-3. List all movies released in a specific year (e.g., 2020)
-*/
+```
 
+
+### 3. List all movies released in a specific year (e.g., 2020)
+
+```sql
 SELECT * FROM netflix
 WHERE
 	type = 'Movie'
     AND
     release_year = 2020;
-    
-/*
-4. Find the top 5 countries with the most content on Netflix
-*/
+```  
 
+### 4. Find the top 5 countries with the most content on Netflix
+
+```sql
 SELECT 
 	country,
     COUNT(show_id) as total_content
@@ -100,46 +103,51 @@ ON n.n <= 1 + LENGTH(country) - LENGTH(REPLACE(country, ',', ''))
 GROUP BY new_country
 ORDER BY total_content DESC
 LIMIT 5;
+```
 
-/*
-5. Identify the longest movie
-*/
 
+### 5. Identify the longest movie
+
+```sql
 SELECT * FROM netflix
 WHERE
 	type = 'Movie'
 	AND
 	duration = (SELECT MAX(duration) FROM netflix);
-    
-/*
-6. Find content added in the last 5 years
-*/
+```
+ 
 
+### 6. Find content added in the last 5 years
+
+```sql
 SELECT *
 FROM netflix
 WHERE STR_TO_DATE(date_added, '%M %d, %Y') >= DATE_SUB(CURDATE(), INTERVAL 5 YEAR);
+```
 
-/*
-7. Find all the movies/TV shows by director 'Rajiv Chilaka'!
-*/
 
+### 7. Find all the movies/TV shows by director 'Rajiv Chilaka'!
+
+```sql
 SELECT *
 FROM netflix
 WHERE FIND_IN_SET('Rajiv Chilaka', director) > 0;
+```
 
-/*
-8. List all TV shows with more than 5 seasons
-*/
 
+### 8. List all TV shows with more than 5 seasons
+
+```sql
 SELECT *
 FROM netflix
 WHERE type = 'TV Show'
   AND CAST(SUBSTRING_INDEX(duration, ' ', 1) AS UNSIGNED) > 5;
+```
 
-/*
-9. Count the number of content items in each genre
-*/
 
+### 9. Count the number of content items in each genre
+
+```sql
 SELECT 
     TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(listed_in, ',', n.n), ',', -1)) AS genre,
     COUNT(*) AS total_content
@@ -149,11 +157,11 @@ JOIN
     (SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5) n(n)
 ON n.n <= 1 + LENGTH(listed_in) - LENGTH(REPLACE(listed_in, ',', ''))
 GROUP BY genre;
+```
 
-/*
-10.Find each year and the average numbers of content release in India on netflix. 
-return top 5 year with highest avg content release!
-*/
+
+### 10.Find each year and the average numbers of content release in India on netflix return top 5 year with highest avg content release!
+
 
 SELECT 
     country,
@@ -172,35 +180,38 @@ GROUP BY country, release_year
 ORDER BY avg_release DESC
 LIMIT 5;
 
-/*
-11. List all movies that are documentaries
-*/
 
+### 11. List all movies that are documentaries
+
+```sql
 SELECT * 
 FROM netflix
 WHERE listed_in LIKE '%Documentaries';
+```
 
-/*
-12. Find all content without a director
-*/
 
+### 12. Find all content without a director
+
+```sql
 SELECT * 
 FROM netflix
 WHERE director is NULL ;
+```
 
-/*
-13. Find how many movies actor 'Salman Khan' appeared in last 10 years!
-*/
 
+### 13. Find how many movies actor 'Salman Khan' appeared in last 10 years!
+
+```sql
 SELECT * 
 FROM netflix
 WHERE casts LIKE '%Salman Khan%'
   AND release_year > YEAR(CURDATE()) - 10;
+```
 
-/*
-14. Find the top 10 actors who have appeared in the highest number of movies produced in India.
-*/
 
+### 14. Find the top 10 actors who have appeared in the highest number of movies produced in India.
+
+```sql
 SELECT 
     TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(casts, ',', n.n), ',', -1)) AS actor,
     COUNT(*) AS total_appearances
@@ -210,14 +221,12 @@ WHERE country = 'India'
 GROUP BY actor
 ORDER BY total_appearances DESC
 LIMIT 10;
+```
 
-/*
-15.
-Categorize the content based on the presence of the keywords 'kill' and 'violence' in 
-the description field. Label content containing these keywords as 'Bad' and all other 
-content as 'Good'. Count how many items fall into each category.
-*/
 
+### 15. Categorize the content based on the presence of the keywords 'kill' and 'violence' in the description field. Label content containing these keywords as 'Bad' and all other content as 'Good'. Count how many items fall into each category.
+
+```sql
 SELECT 
     category,
     COUNT(*) AS content_count
@@ -230,6 +239,7 @@ FROM (
     FROM netflix
 ) AS categorized_content
 GROUP BY category;
+```
 
 ## Findings and Conclusion
 
